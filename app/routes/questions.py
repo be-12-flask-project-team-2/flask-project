@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 from flask import Blueprint, render_template, redirect, url_for, request
 
 questions_bp = Blueprint("questions", __name__, url_prefix="/questions")
@@ -115,3 +117,4 @@ def question_page(question_id):
 @questions_bp.route("/complete")
 def complete():
     return render_template("complete.html")
+>>>>>>> 675a1b889b943296f1b09c91eda312406996cf00
