@@ -1,7 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 
 answers_bp = Blueprint("answers", __name__, url_prefix="/answers")
 
 @answers_bp.route("/")
 def answers():
-    return "answers 연결 완료."
+    return render_template("answers.html")
