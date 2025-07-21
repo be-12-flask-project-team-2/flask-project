@@ -1,40 +1,49 @@
-from flask import Blueprint, request, jsonify
-from app import db
+from flask import Blueprint, jsonify, request
+from sqlalchemy.exc import IntegrityError
+
 from app.models import User
-from flask_sqlalchemy import SQLAlchemy
+from config import db
 
-users_bp = Blueprint('users', __name__)
+user_blp = Blueprint("users", __name__)
 
-@users_bp.route('/', methods=['POST'])
-def create_user():
-    data = request.get_json()
-    new_user = User(username=data['username'], email=data['email'])
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({'message': 'User created successfully!'}), 201
 
-@users_bp.route('/', methods=['GET'])
-def get_users():
-    users = User.query.all()
-    return jsonify([user.to_dict() for user in users])
+@user_blp.route("/", methods=["GET"])
+def connect():
+    if request.method == "GET":
+        return jsonify({"message": "Success Connect"})
 
-@users_bp.route('/<int:id>', methods=['GET'])
-def get_user(id):
-    user = User.query.get_or_404(id)
-    return jsonify(user.to_dict())
 
-@users_bp.route('/<int:id>', methods=['PUT'])
-def update_user(id):
-    user = User.query.get_or_404(id)
-    data = request.get_json()
-    user.username = data['username']
-    user.email = data['email']
-    db.session.commit()
-    return jsonify({'message': 'User updated successfully!'})
+@user_blp.route("/signup", methods=["POST"])
+def signup_page():
+    if request.method == "POST":
+        try:
+            data = request.get_json()
 
-@users_bp.route('/<int:id>', methods=['DELETE'])
-def delete_user(id):
-    user = User.query.get_or_404(id)
-    db.session.delete(user)
-    db.session.commit()
-    return jsonify({'message': 'User deleted successfully!'})
+            user = User(
+                name=data["name"],
+                age=data["age"],
+                gender=data["gender"],
+                email=data["email"],
+            )
+
+            db.session.add(user)
+            db.session.commit()
+
+            return (
+                jsonify(
+                    {
+                        "message": f"{user.name}님 회원가입을 축하합니다",
+                        "user_id": user.id,
+                    }
+                ),
+                201,
+            )
+
+        except KeyError as e:
+            return jsonify({"message": f"Missing required field: {str(e)}"}), 400
+
+        except ValueError:
+            return jsonify({"message": "이미 존재하는 계정 입니다."}), 400
+
+        except IntegrityError:
+            return jsonify({"message": "이미 존재하는 이메일 입니다."}), 400
