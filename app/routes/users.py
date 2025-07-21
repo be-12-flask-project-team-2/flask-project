@@ -1,25 +1,39 @@
-from datetime import datetime
-from sqlalchemy import Column, Integer, String, Enum, DateTime
-from sqlalchemy.orm import declarative_base
+from flask import Blueprint, request, jsonify
+from app import db
+from app.models import User
 
-Base = declarative_base()
+users_bp = Blueprint('users', __name__)
 
-class User(Base):
-    __tablename__ = 'users'
+@users_bp.route('/', methods=['POST'])
+def create_user():
+    data = request.get_json()
+    new_user = User(username=data['username'], email=data['email'])
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({'message': 'User created successfully!'}), 201
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(50), nullable=False)
-    age = Column(
-        Enum('teen', 'twenty', 'thirty', 'forty', 'fifty', name='age_enum', native_enum=False),
-        nullable=False
-    )
-    gender = Column(
-        Enum('male', 'female', 'other', name='gender_enum', native_enum=False),
-        nullable=False
-    )
-    email = Column(String(120), unique=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+@users_bp.route('/', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    return jsonify([user.to_dict() for user in users])
 
-    def __repr__(self):
-        return f"<User(name={self.name}, age={self.age}, gender={self.gender}, email={self.email})>"
+@users_bp.route('/<int:id>', methods=['GET'])
+def get_user(id):
+    user = User.query.get_or_404(id)
+    return jsonify(user.to_dict())
+
+@users_bp.route('/<int:id>', methods=['PUT'])
+def update_user(id):
+    user = User.query.get_or_404(id)
+    data = request.get_json()
+    user.username = data['username']
+    user.email = data['email']
+    db.session.commit()
+    return jsonify({'message': 'User updated successfully!'})
+
+@users_bp.route('/<int:id>', methods=['DELETE'])
+def delete_user(id):
+    user = User.query.get_or_404(id)
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'message': 'User deleted successfully!'})
