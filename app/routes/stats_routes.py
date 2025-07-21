@@ -45,10 +45,10 @@ def question_answer_distribution():
             func.count(Answer.id).label('answer_count'),
             (func.count(Answer.id) * 100 / func.sum(func.count(Answer.id)).over(partition_by=Question.id)).label('percentage')
         ).join(Choice, Choice.id == Answer.choice_id) \
-         .join(Question, Question.id == Choice.question_id) \
-         .group_by(Question.id, Choice.id) \
-         .order_by(Question.id, Choice.id) \
-         .all()
+        .join(Question, Question.id == Choice.question_id) \
+        .group_by(Question.id, Choice.id) \
+        .order_by(Question.id, Choice.id) \
+        .all()
 
         data = [
             {
