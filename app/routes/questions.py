@@ -1,8 +1,6 @@
-<<<<<<< HEAD
-=======
 from flask import Blueprint, render_template, redirect, url_for, request
 
-questions_bp = Blueprint("questions", __name__, url_prefix="/questions")
+questions_blp = Blueprint("questions", __name__, url_prefix="/questions")
 
 # 설문 문항 데이터 (각 문항과 선택지 정의)
 questions = [
@@ -97,7 +95,7 @@ questions = [
 ]
 
 # 질문 렌더링
-@questions_bp.route("/<int:question_id>", methods=["GET", "POST"])
+@questions_blp.route("/<int:question_id>", methods=["GET", "POST"])
 def question_page(question_id):
     if question_id < 1 or question_id > len(questions):
         return redirect(url_for("questions.question_page", question_id=1))
@@ -114,7 +112,6 @@ def question_page(question_id):
     return render_template("survey.html", question=question)
 
 # 설문 완료 페이지
-@questions_bp.route("/complete")
+@questions_blp.route("/complete")
 def complete():
     return render_template("complete.html")
->>>>>>> 675a1b889b943296f1b09c91eda312406996cf00

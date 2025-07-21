@@ -1,8 +1,7 @@
-<<<<<<< HEAD
-=======
 from flask import Blueprint, request, jsonify
 from app import db
 from app.models import User
+from flask_sqlalchemy import SQLAlchemy
 
 users_bp = Blueprint('users', __name__)
 
@@ -39,4 +38,3 @@ def delete_user(id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({'message': 'User deleted successfully!'})
->>>>>>> 675a1b889b943296f1b09c91eda312406996cf00
