@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, Blueprint
+from flask import Flask, jsonify, Blueprint, request
 from app.models import Image
 
 images_blp = Blueprint("image", __name__, url_prefix="/images")
@@ -22,9 +22,7 @@ def create_image():
     images.append(image)
     image_id_counter += 1
 
-    return jsonify({
-        "message": f"ID: {image['id']} Image Success Create"
-    }), 200
+    return jsonify({"message": f"ID: {image['id']} Image Success Create"}), 200
 
 @images_blp.route("/main", methods=["GET"])
 def main_image():

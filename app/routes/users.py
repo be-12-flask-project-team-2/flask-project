@@ -6,12 +6,9 @@ from config import db
 
 user_blp = Blueprint("users", __name__)
 
-
-@user_blp.route("/", methods=["GET"])
-def connect():
-    if request.method == "GET":
-        return jsonify({"message": "Success Connect"})
-
+@user_blp.route("/", methods=["POST", "GET"])
+def check_connection():
+    return jsonify({"message": "Success Connect"}), 200
 
 @user_blp.route("/signup", methods=["POST"])
 def signup_page():

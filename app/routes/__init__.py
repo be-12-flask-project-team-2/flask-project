@@ -9,13 +9,11 @@ from .images import images_blp
 main_bp = Blueprint("main", __name__)
 
 def register_routes(application):
-    main_bp.register_blueprint(images_blp, url_prefix="/image")
     main_bp.register_blueprint(user_blp)
+    main_bp.register_blueprint(images_blp, url_prefix="/image")
     main_bp.register_blueprint(questions_blp, url_prefix="/questions")
-    main_bp.register_blueprint(stats_routes_blp)
     main_bp.register_blueprint(choices_blp, url_prefix="/choices")
+    main_bp.register_blueprint(stats_routes_blp)
     main_bp.register_blueprint(answers_blp)
 
-@main_bp.route("/", methods=["GET"])
-def check_connection():
-    return jsonify({"message": "Success Connect"}), 200
+    application.register_blueprint(main_bp)

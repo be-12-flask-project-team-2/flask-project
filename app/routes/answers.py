@@ -1,13 +1,12 @@
 from flask import Flask, jsonify, Blueprint, request
+from config import db
 from app.models import Answer
-from app import db
 
 answers_blp = Blueprint("answers", __name__)
 
 @answers_blp.route("/submit", methods=["POST"])
 def submit_answers():
     data = request.get_json()
-
     user_id = data[0]["user_id"]
     for item in data:
         answer = Answer(user_id=item["user_id"], choice_id=item["choice_id"])
