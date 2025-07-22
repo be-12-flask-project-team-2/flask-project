@@ -1,0 +1,257 @@
+# add_hobby_survey_data.py
+from app import app, db
+from app.models import Question, Choice
+
+def add_hobby_survey_questions():
+    """취미 설문조사 질문들을 추가합니다."""
+    with app.app_context():
+        try:
+            # 기존 데이터가 있다면 삭제 (선택사항)
+            # Question.query.delete()
+            # Choice.query.delete()
+            # db.session.commit()
+            
+            # 질문 1: 현재 즐기고 있는 취미
+            q1 = Question(
+                question_id=1, 
+                title="현재 즐기고 있는 취미는 무엇인가요? (복수 선택 가능)",
+                is_active=True
+            )
+            db.session.add(q1)
+            db.session.flush()
+            
+            choices1 = [
+                Choice(question_id=q1.id, content="독서", sort=1, is_active=True),
+                Choice(question_id=q1.id, content="영화/드라마 감상", sort=2, is_active=True),
+                Choice(question_id=q1.id, content="음악 감상", sort=3, is_active=True),
+                Choice(question_id=q1.id, content="악기 연주", sort=4, is_active=True),
+                Choice(question_id=q1.id, content="노래/보컬", sort=5, is_active=True),
+                Choice(question_id=q1.id, content="운동 (헬스, 요가, 러닝 등)", sort=6, is_active=True),
+                Choice(question_id=q1.id, content="등산", sort=7, is_active=True),
+                Choice(question_id=q1.id, content="자전거 타기", sort=8, is_active=True),
+                Choice(question_id=q1.id, content="수영", sort=9, is_active=True),
+                Choice(question_id=q1.id, content="게임 (콘솔, PC, 모바일 등)", sort=10, is_active=True),
+                Choice(question_id=q1.id, content="그림 그리기/캘리그라피", sort=11, is_active=True),
+                Choice(question_id=q1.id, content="글쓰기/일기", sort=12, is_active=True),
+                Choice(question_id=q1.id, content="요리/베이킹", sort=13, is_active=True),
+                Choice(question_id=q1.id, content="사진 촬영", sort=14, is_active=True),
+                Choice(question_id=q1.id, content="영상 제작/편집", sort=15, is_active=True),
+                Choice(question_id=q1.id, content="춤/댄스", sort=16, is_active=True),
+                Choice(question_id=q1.id, content="뜨개질/자수", sort=17, is_active=True),
+                Choice(question_id=q1.id, content="공예(DIY, 레진, 미니어처 등)", sort=18, is_active=True),
+                Choice(question_id=q1.id, content="퍼즐/보드게임", sort=19, is_active=True),
+                Choice(question_id=q1.id, content="정원 가꾸기/식물 키우기", sort=20, is_active=True),
+                Choice(question_id=q1.id, content="여행/캠핑", sort=21, is_active=True),
+                Choice(question_id=q1.id, content="애완동물 돌보기", sort=22, is_active=True),
+                Choice(question_id=q1.id, content="자원봉사", sort=23, is_active=True),
+                Choice(question_id=q1.id, content="기타", sort=24, is_active=True)
+            ]
+            
+            for choice in choices1:
+                db.session.add(choice)
+            
+            # 질문 2: 하루 평균 취미 활동 시간
+            q2 = Question(
+                question_id=2, 
+                title="하루 평균 취미 활동에 투자하는 시간은?",
+                is_active=True
+            )
+            db.session.add(q2)
+            db.session.flush()
+            
+            choices2 = [
+                Choice(question_id=q2.id, content="30분 이하", sort=1, is_active=True),
+                Choice(question_id=q2.id, content="30분~1시간", sort=2, is_active=True),
+                Choice(question_id=q2.id, content="1~2시간", sort=3, is_active=True),
+                Choice(question_id=q2.id, content="2~3시간", sort=4, is_active=True),
+                Choice(question_id=q2.id, content="3시간 이상", sort=5, is_active=True),
+                Choice(question_id=q2.id, content="시간이 날 때마다 다름", sort=6, is_active=True)
+            ]
+            
+            for choice in choices2:
+                db.session.add(choice)
+            
+            # 질문 3: 취미를 즐기는 시간대
+            q3 = Question(
+                question_id=3, 
+                title="주로 취미를 즐기는 시간대는 언제인가요?",
+                is_active=True
+            )
+            db.session.add(q3)
+            db.session.flush()
+            
+            choices3 = [
+                Choice(question_id=q3.id, content="새벽", sort=1, is_active=True),
+                Choice(question_id=q3.id, content="오전", sort=2, is_active=True),
+                Choice(question_id=q3.id, content="오후", sort=3, is_active=True),
+                Choice(question_id=q3.id, content="저녁", sort=4, is_active=True),
+                Choice(question_id=q3.id, content="밤", sort=5, is_active=True),
+                Choice(question_id=q3.id, content="일정하지 않음", sort=6, is_active=True)
+            ]
+            
+            for choice in choices3:
+                db.session.add(choice)
+            
+            # 질문 4: 취미를 함께 하는 사람
+            q4 = Question(
+                question_id=4, 
+                title="취미를 주로 누구와 함께 하나요?",
+                is_active=True
+            )
+            db.session.add(q4)
+            db.session.flush()
+            
+            choices4 = [
+                Choice(question_id=q4.id, content="혼자", sort=1, is_active=True),
+                Choice(question_id=q4.id, content="친구", sort=2, is_active=True),
+                Choice(question_id=q4.id, content="가족", sort=3, is_active=True),
+                Choice(question_id=q4.id, content="동호회/모임", sort=4, is_active=True),
+                Choice(question_id=q4.id, content="온라인 커뮤니티", sort=5, is_active=True),
+                Choice(question_id=q4.id, content="기타", sort=6, is_active=True)
+            ]
+            
+            for choice in choices4:
+                db.session.add(choice)
+            
+            # 질문 5: 최근 6개월 내 새로운 취미
+            q5 = Question(
+                question_id=5, 
+                title="최근 6개월 내 새롭게 시작한 취미가 있나요?",
+                is_active=True
+            )
+            db.session.add(q5)
+            db.session.flush()
+            
+            choices5 = [
+                Choice(question_id=q5.id, content="예", sort=1, is_active=True),
+                Choice(question_id=q5.id, content="아니오", sort=2, is_active=True),
+                Choice(question_id=q5.id, content="시도했지만 그만둠", sort=3, is_active=True)
+            ]
+            
+            for choice in choices5:
+                db.session.add(choice)
+            
+            # 질문 6: 가장 오래 해온 취미 (텍스트 입력)
+            q6 = Question(
+                question_id=6, 
+                title="가장 오래 해온 취미는 무엇인가요?",
+                is_active=True
+            )
+            db.session.add(q6)
+            db.session.flush()
+            # 질문 6은 텍스트 입력이므로 선택지 없음
+            
+            # 질문 7: 취미 활동을 통한 만족감
+            q7 = Question(
+                question_id=7, 
+                title="취미 활동을 통해 얻는 가장 큰 만족감은 무엇인가요?",
+                is_active=True
+            )
+            db.session.add(q7)
+            db.session.flush()
+            
+            choices7 = [
+                Choice(question_id=q7.id, content="스트레스 해소", sort=1, is_active=True),
+                Choice(question_id=q7.id, content="성취감", sort=2, is_active=True),
+                Choice(question_id=q7.id, content="창의력 향상", sort=3, is_active=True),
+                Choice(question_id=q7.id, content="체력 증진", sort=4, is_active=True),
+                Choice(question_id=q7.id, content="자기 표현", sort=5, is_active=True),
+                Choice(question_id=q7.id, content="새로운 사람과의 교류", sort=6, is_active=True),
+                Choice(question_id=q7.id, content="단순한 재미", sort=7, is_active=True),
+                Choice(question_id=q7.id, content="기타", sort=8, is_active=True)
+            ]
+            
+            for choice in choices7:
+                db.session.add(choice)
+            
+            # 질문 8: 도전해보고 싶은 취미 (복수 선택)
+            q8 = Question(
+                question_id=8, 
+                title="새롭게 도전해보고 싶은 취미는 무엇인가요? (복수 선택 가능)",
+                is_active=True
+            )
+            db.session.add(q8)
+            db.session.flush()
+            
+            choices8 = [
+                Choice(question_id=q8.id, content="스카이다이빙", sort=1, is_active=True),
+                Choice(question_id=q8.id, content="스쿠버다이빙", sort=2, is_active=True),
+                Choice(question_id=q8.id, content="서핑", sort=3, is_active=True),
+                Choice(question_id=q8.id, content="사진/영상 촬영", sort=4, is_active=True),
+                Choice(question_id=q8.id, content="캠핑/차박", sort=5, is_active=True),
+                Choice(question_id=q8.id, content="해외 여행", sort=6, is_active=True),
+                Choice(question_id=q8.id, content="악기 배우기", sort=7, is_active=True),
+                Choice(question_id=q8.id, content="요리 마스터하기", sort=8, is_active=True),
+                Choice(question_id=q8.id, content="운동/바디 프로필", sort=9, is_active=True),
+                Choice(question_id=q8.id, content="플라워 클래스", sort=10, is_active=True),
+                Choice(question_id=q8.id, content="미술/도예", sort=11, is_active=True),
+                Choice(question_id=q8.id, content="펫 관련 활동", sort=12, is_active=True),
+                Choice(question_id=q8.id, content="자격증 취득 취미", sort=13, is_active=True),
+                Choice(question_id=q8.id, content="유튜브/Vlog 제작", sort=14, is_active=True),
+                Choice(question_id=q8.id, content="기타", sort=15, is_active=True)
+            ]
+            
+            for choice in choices8:
+                db.session.add(choice)
+            
+            # 질문 9: 온라인 취미 활동에 대한 생각
+            q9 = Question(
+                question_id=9, 
+                title="온라인 취미 활동에 대해 어떻게 생각하시나요?",
+                is_active=True
+            )
+            db.session.add(q9)
+            db.session.flush()
+            
+            choices9 = [
+                Choice(question_id=q9.id, content="매우 즐긴다", sort=1, is_active=True),
+                Choice(question_id=q9.id, content="종종 한다", sort=2, is_active=True),
+                Choice(question_id=q9.id, content="가끔 한다", sort=3, is_active=True),
+                Choice(question_id=q9.id, content="거의 하지 않는다", sort=4, is_active=True),
+                Choice(question_id=q9.id, content="온라인보다 오프라인 활동 선호", sort=5, is_active=True)
+            ]
+            
+            for choice in choices9:
+                db.session.add(choice)
+            
+            # 질문 10: 취미 활동 월 평균 지출
+            q10 = Question(
+                question_id=10, 
+                title="취미 활동에 월 평균으로 얼마나 지출하시나요?",
+                is_active=True
+            )
+            db.session.add(q10)
+            db.session.flush()
+            
+            choices10 = [
+                Choice(question_id=q10.id, content="거의 지출 없음", sort=1, is_active=True),
+                Choice(question_id=q10.id, content="1만 원 이하", sort=2, is_active=True),
+                Choice(question_id=q10.id, content="1~5만 원", sort=3, is_active=True),
+                Choice(question_id=q10.id, content="5~10만 원", sort=4, is_active=True),
+                Choice(question_id=q10.id, content="10만 원 이상", sort=5, is_active=True),
+                Choice(question_id=q10.id, content="금액은 들지만 아깝지 않다", sort=6, is_active=True)
+            ]
+            
+            for choice in choices10:
+                db.session.add(choice)
+            
+            # 모든 변경사항 저장
+            db.session.commit()
+            
+            print("✅ 취미 설문조사 데이터 추가 완료!")
+            print(f"📊 총 질문 수: {Question.query.count()}")
+            print(f"📝 총 선택지 수: {Choice.query.count()}")
+            
+            # 질문별 선택지 수 확인
+            for i in range(1, 11):
+                question = Question.query.filter_by(question_id=i).first()
+                if question:
+                    choice_count = Choice.query.filter_by(question_id=question.id).count()
+                    print(f"   질문 {i}: {choice_count}개 선택지")
+            
+        except Exception as e:
+            db.session.rollback()
+            print(f"❌ 오류 발생: {e}")
+
+if __name__ == '__main__':
+    add_hobby_survey_questions()
