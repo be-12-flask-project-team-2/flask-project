@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from config import db
 from app.models import Choice
+from app.models import Question
 
 choices_blp = Blueprint("choices", __name__, url_prefix="/choices")
 
@@ -37,13 +38,22 @@ def create_choice():
 @choices_blp.route("/", methods=["GET"])
 def get_all_choices():
     choices = Choice.query.all()
+    questions = Question.query.all()
 
-    result = [{
-        "id": choice.id,
-        "content": choice.content,
-        "sqe": choice.sqe,
-        "question_id": choice.question_id,
-        "is_active": choice.is_active
-    } for choice in choices]
+    result = {
+        "id": questions.id,
+        "title": questions.title,
+        "image": questions.image_id,
+        "choices": [
+        {
+            "id": choice.id,
+            "content": choice.content,
+            "sqe": choice.sqe,
+            "is_active": choice.is_active,
+            "question_id": choice.question_id  
+        }
+	    for choice in questions.choice if choice.is_active 
+        ]
+    }
 
     return jsonify(result), 200
