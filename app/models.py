@@ -1,84 +1,82 @@
+# app/models.py
 from app import db
+from datetime import datetime
 
 class User(db.Model):
+    __tablename__ = 'users'
+    
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-
+    name = db.Column(db.String(100), nullable=False)
+    age = db.Column(db.Integer, nullable=True)
+    gender = db.Column(db.String(10), nullable=True)
+    email = db.Column(db.String(120), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # 관계 설정
+    answers = db.relationship('Answer', backref='user', lazy=True, cascade='all, delete-orphan')
+    
     def __repr__(self):
-        return f'<User {self.username}>'
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'username': self.username,
-            'email': self.email
-        }
+        return f'<User {self.name}>'
 
 class Question(db.Model):
+    __tablename__ = 'questions'
+    
     id = db.Column(db.Integer, primary_key=True)
-    question_text = db.Column(db.String(255), nullable=False)
-
+    question_id = db.Column(db.Integer, nullable=True)  # 설문 번호 (1, 2, 3...)
+    title = db.Column(db.Text, nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # 관계 설정
+    choices = db.relationship('Choice', backref='question', lazy=True, cascade='all, delete-orphan')
+    answers = db.relationship('Answer', backref='question', lazy=True, cascade='all, delete-orphan')
+    
     def __repr__(self):
-        return f'<Question {self.question_text}>'
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'question_text': self.question_text
-        }
+        return f'<Question {self.title[:50]}>'
 
 class Choice(db.Model):
+    __tablename__ = 'choices'
+    
     id = db.Column(db.Integer, primary_key=True)
-    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
-    choice_text = db.Column(db.String(255), nullable=False)
-
-    question = db.relationship('Question', backref=db.backref('choices', lazy=True))
-
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    sort = db.Column(db.Integer, nullable=True)  # 선택지 순서
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # 관계 설정
+    answers = db.relationship('Answer', backref='choice', lazy=True, cascade='all, delete-orphan')
+    
     def __repr__(self):
-        return f'<Choice {self.choice_text}>'
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'question_id': self.question_id,
-            'choice_text': self.choice_text
-        }
-
-class Image(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
-    image_url = db.Column(db.String(255), nullable=False)
-
-    question = db.relationship('Question', backref=db.backref('images', lazy=True))
-
-    def __repr__(self):
-        return f'<Image {self.image_url}>'
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'question_id': self.question_id,
-            'image_url': self.image_url
-        }
+        return f'<Choice {self.content[:30]}>'
 
 class Answer(db.Model):
+    __tablename__ = 'answers'
+    
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
-    choice_id = db.Column(db.Integer, db.ForeignKey('choice.id'), nullable=False)
-
-    user = db.relationship('User', backref=db.backref('answers', lazy=True))
-    question = db.relationship('Question', backref=db.backref('answers', lazy=True))
-    choice = db.relationship('Choice', backref=db.backref('answers', lazy=True))
-
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
+    choice_id = db.Column(db.Integer, db.ForeignKey('choices.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # (한 사용자가 같은 질문에 중복 답변 방지)
+    __table_args__ = (db.UniqueConstraint('user_id', 'question_id', name='unique_user_question'),)
+    
     def __repr__(self):
-        return f'<Answer {self.id}>'
+        return f'<Answer User:{self.user_id} Q:{self.question_id}>'
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'user_id': self.user_id,
-            'question_id': self.question_id,
-            'choice_id': self.choice_id
-        }
+class Image(db.Model):
+    __tablename__ = 'images'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(255), nullable=False)
+    type = db.Column(db.String(50), nullable=True)  # 'question', 'choice', 'logo' 등
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<Image {self.url}>'
