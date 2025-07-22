@@ -53,11 +53,7 @@ def get_question(question_id):
         "image_id": question.image_id,
         "is_active": question.is_active
     }
-    result["choices"] = {
-        "id": question.id,
-        "title": question.title,
-        "image": question.image_id,
-        "choices": [
+    result["choices"] = [
         {
             "id": choice.id,
             "content": choice.content,
@@ -66,7 +62,6 @@ def get_question(question_id):
             "question_id": choice.question_id  
         }
 	    for choice in question.choice if choice.is_active 
-        ]
-    }
+    ]
 
     return jsonify(result), 200
