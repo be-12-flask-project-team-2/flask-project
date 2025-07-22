@@ -53,5 +53,22 @@ def get_question(question_id):
         "image_id": question.image_id,
         "is_active": question.is_active
     }
+    questions = Question.query.all()
+
+    result["choices"] = {
+        "id": questions.id,
+        "title": questions.title,
+        "image": questions.image_id,
+        "choices": [
+        {
+            "id": choice.id,
+            "content": choice.content,
+            "sqe": choice.sqe,
+            "is_active": choice.is_active,
+            "question_id": choice.question_id  
+        }
+	    for choice in questions.choice if choice.is_active 
+        ]
+    }
 
     return jsonify(result), 200
