@@ -10,9 +10,15 @@ class User(db.Model):
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'username': self.username,
-            'email': self.email
+            "id": self.id,
+            "name": self.name,
+            "age": self.age.value if hasattr(self.age, "value") else self.age,
+            "gender": (
+                self.gender.value if hasattr(self.gender, "value") else self.gender
+            ),
+            "email": self.email,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
         }
 
 class Question(db.Model):
@@ -24,8 +30,13 @@ class Question(db.Model):
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'question_text': self.question_text
+            "id": self.id,
+            "title": self.title,
+            "is_active": self.is_active,
+            "sqe": self.sqe,
+            "image": self.image.to_dict() if self.image else None,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
         }
 
 class Choice(db.Model):
@@ -40,9 +51,13 @@ class Choice(db.Model):
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'question_id': self.question_id,
-            'choice_text': self.choice_text
+            "id": self.id,
+            "content": self.content,
+            "is_active": self.is_active,
+            "sqe": self.sqe,
+            "question_id": self.question_id,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
         }
 
 class Image(db.Model):
@@ -57,9 +72,11 @@ class Image(db.Model):
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'question_id': self.question_id,
-            'image_url': self.image_url
+            "id": self.id,
+            "url": self.url,
+            "type": self.type.value if hasattr(self.type, "value") else self.type,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
         }
 
 class Answer(db.Model):
@@ -77,8 +94,9 @@ class Answer(db.Model):
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'user_id': self.user_id,
-            'question_id': self.question_id,
-            'choice_id': self.choice_id
+            "id": self.id,
+            "user_id": self.user_id,
+            "choice_id": self.choice_id,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
         }
