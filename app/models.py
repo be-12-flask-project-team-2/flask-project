@@ -1,6 +1,7 @@
 from datetime import datetime
-from sqlalchemy import Enum
+from enum import Enum
 from config import db
+
 
 class AgeStatus(Enum):
     teen = "teen"
@@ -9,13 +10,21 @@ class AgeStatus(Enum):
     fourty = "fourty"
     fifty = "fifty"
 
+class Gender(Enum):
+    male = "male"
+    female = "female"
+
+class ImageType(Enum):
+    main = "main"
+    sub = "sub"
+
 class User(db.Model):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(10), nullable=False)
-    age = db.Column(Enum(AgeStatus), name='age_enum', nullable=False)
-    gender = db.Column(Enum('male', 'female', name='gender_enum'), nullable=False)
+    age = db.Column(db.Enum(AgeStatus), nullable=False)
+    gender = db.Column(db.Enum(Gender), nullable=False)
     email = db.Column(db.String(120), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -70,7 +79,7 @@ class Image(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(255), nullable=False)
-    type = db.Column(Enum('main', 'sub', name='image_type_enum'), nullable=False)
+    type = db.Column(db.Enum(ImageType), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
