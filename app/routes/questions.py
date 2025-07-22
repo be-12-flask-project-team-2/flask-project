@@ -45,6 +45,7 @@ def get_question(question_id):
     if not question or not question.is_active:
         return jsonify({"message": "Question not found"}), 404
 
+    
     result = {
         "id": question.id,
         "title": question.title,
