@@ -2,12 +2,19 @@ from datetime import datetime
 from sqlalchemy import Enum
 from config import db
 
+class AgeStatus(Enum):
+    teen = "teen"
+    twenty = "twenty"
+    thirty = "thirty"
+    fourty = "fourty"
+    fifty = "fifty"
+
 class User(db.Model):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(10), nullable=False)
-    age = db.Column(Enum('teen', 'twenty', 'thirty', 'forty', 'fifty', name='age_enum'), nullable=False)
+    age = db.Column(Enum(AgeStatus), name='age_enum', nullable=False)
     gender = db.Column(Enum('male', 'female', name='gender_enum'), nullable=False)
     email = db.Column(db.String(120), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
