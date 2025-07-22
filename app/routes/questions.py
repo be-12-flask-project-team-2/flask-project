@@ -50,7 +50,7 @@ def get_question(question_id):
         "id": question.id,
         "title": question.title,
         "sqe": question.sqe,
-        "image_id": question.image_id,
+        "image": question.image.url,
         "is_active": question.is_active
     }
     result["choices"] = [
