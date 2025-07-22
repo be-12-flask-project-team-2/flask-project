@@ -16,6 +16,4 @@ def register_routes(application):
     main_bp.register_blueprint(stats_routes_blp)
     main_bp.register_blueprint(answers_blp)
 
-@main_bp.route("/", methods=["GET"])
-def check_connection():
-    return jsonify({"message": "Success Connect"}), 200
+    application.register_blueprint(main_bp)

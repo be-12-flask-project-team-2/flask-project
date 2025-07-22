@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, Blueprint, request
+from config import db
 from app.models import Answer
-from app import db
 
 answers_blp = Blueprint("answers", __name__)
 

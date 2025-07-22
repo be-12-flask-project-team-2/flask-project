@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, jsonify
+from app.models import Question
 
 questions_blp = Blueprint("questions", __name__, url_prefix="/questions")
 
@@ -94,24 +95,32 @@ questions = [
     }
 ]
 
-# 질문 렌더링
-@questions_blp.route("/<int:question_id>", methods=["GET", "POST"])
-def question_page(question_id):
-    if question_id < 1 or question_id > len(questions):
-        return redirect(url_for("questions.question_page", question_id=1))
+# 특정 질문의 선택지 조회
+@questions_blp.route("/<int:question_id>", methods=["GET"])
+def get_question(question_id):
+    questions = Question.query.filter_by(question_id=question_id, is_active=True).order_by(Question.sqe).all()
 
-    question = questions[question_id - 1]
+    result = [{
+        "id": question.id,
+        "content": question.content,
+        "sqe": question.sqe,
+        "question_id": question.question_id
+    } for question in questions]
 
-    if request.method == "POST":
-        # 사용자 응답 처리 로직 필요시 여기에 추가
-        next_id = question_id + 1
-        if next_id > len(questions):
-            return redirect(url_for("questions.complete"))
-        return redirect(url_for("questions.question_page", question_id=next_id))
+    return jsonify(result), 200
 
-    return render_template("survey.html", question=question)
+# 모든 선택지 조회
+@questions_blp.route("/count", methods=["GET"])
+def get_all_questions():
+    questions = Question.query.all()
 
-# 설문 완료 페이지
-@questions_blp.route("/complete")
-def complete():
-    return render_template("complete.html")
+    result = [{
+        "id": question.id,
+        "content": question.content,
+        "sqe": question.sqe,
+        "question_id": question.question_id,
+        "is_active": question.is_active
+    } for question in questions]
+
+
+    return jsonify(result), 200

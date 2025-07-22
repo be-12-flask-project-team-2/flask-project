@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
-from app import db
+from config import db
 from app.models import Choice
 
-choices_blp = Blueprint("choices", __name__)
+choices_blp = Blueprint("choices", __name__, url_prefix="/choices")
 
 # 선택지 생성
 @choices_blp.route("/", methods=["POST"])
@@ -32,33 +32,3 @@ def create_choice():
             "sqe": choice.sqe
         }
     }), 201
-
-# 특정 질문의 선택지 조회
-@choices_blp.route("/question/<int:question_id>", methods=["GET"])
-def get_choices_by_question(question_id):
-    choices = Choice.query.filter_by(question_id=question_id, is_active=True).order_by(Choice.sqe).all()
-
-    result = [{
-        "id": choice.id,
-        "content": choice.content,
-        "sqe": choice.sqe,
-        "question_id": choice.question_id
-    } for choice in choices]
-
-    return jsonify(result), 200
-
-# 모든 선택지 조회
-@choices_blp.route("/", methods=["GET"])
-def get_all_choices():
-    choices = Choice.query.all()
-
-    result = [{
-        "id": choice.id,
-        "content": choice.content,
-        "sqe": choice.sqe,
-        "question_id": choice.question_id,
-        "is_active": choice.is_active
-    } for choice in choices]
-
-
-    return jsonify(result), 200
