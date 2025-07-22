@@ -1,82 +1,70 @@
-# app/models.py
-from app import db
 from datetime import datetime
+from sqlalchemy import Enum
+from config import db
 
 class User(db.Model):
-    __tablename__ = 'users'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    age = db.Column(db.Integer, nullable=True)
-    gender = db.Column(db.String(10), nullable=True)
-    email = db.Column(db.String(120), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    # 관계 설정
-    answers = db.relationship('Answer', backref='user', lazy=True, cascade='all, delete-orphan')
-    
-    def __repr__(self):
-        return f'<User {self.name}>'
+    __tablename__ = 'user'
 
-class Question(db.Model):
-    __tablename__ = 'questions'
-    
     id = db.Column(db.Integer, primary_key=True)
-    question_id = db.Column(db.Integer, nullable=True)  # 설문 번호 (1, 2, 3...)
-    title = db.Column(db.Text, nullable=False)
-    is_active = db.Column(db.Boolean, default=True)
+    name = db.Column(db.String(10), nullable=False)
+    age = db.Column(Enum('teen', 'twenty', 'thirty', 'forty', 'fifty', name='age_enum'), nullable=False)
+    gender = db.Column(Enum('male', 'female', name='gender_enum'), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    # 관계 설정
-    choices = db.relationship('Choice', backref='question', lazy=True, cascade='all, delete-orphan')
-    answers = db.relationship('Answer', backref='question', lazy=True, cascade='all, delete-orphan')
-    
-    def __repr__(self):
-        return f'<Question {self.title[:50]}>'
 
-class Choice(db.Model):
-    __tablename__ = 'choices'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    sort = db.Column(db.Integer, nullable=True)  # 선택지 순서
-    is_active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    # 관계 설정
-    answers = db.relationship('Answer', backref='choice', lazy=True, cascade='all, delete-orphan')
-    
-    def __repr__(self):
-        return f'<Choice {self.content[:30]}>'
+    answers = db.relationship('Answer', back_populates='user', cascade='all, delete-orphan')
+
 
 class Answer(db.Model):
-    __tablename__ = 'answers'
-    
+    __tablename__ ='answers'
+
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    choice_id = db.Column(db.Integer, db.ForeignKey('choice.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    
+    user = db.relationship('User', back_populates='answers')
+    choice = db.relationship('Choice', back_populates='answers')
+    
+
+class Choice(db.Model):
+    __tablename__ = 'choice'
+
+    id = db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
-    choice_id = db.Column(db.Integer, db.ForeignKey('choices.id'), nullable=False)
+    content = db.Column(db.String(255), nullable=False)
+    sqe = db.Column(db.Integer, nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    question = db.relationship('Question', back_populates='choice')
+    answers = db.relationship('Answer', back_populates='choice')
+    
+class Question(db.Model):
+    __tablename__ = 'questions'
+
+    id = db.Column(db.Integer, primary_key=True)
+    image_id = db.Column(db.Integer, db.ForeignKey('images.id'), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
+    sqe = db.Column(db.Integer, nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    # (한 사용자가 같은 질문에 중복 답변 방지)
-    __table_args__ = (db.UniqueConstraint('user_id', 'question_id', name='unique_user_question'),)
-    
-    def __repr__(self):
-        return f'<Answer User:{self.user_id} Q:{self.question_id}>'
+
+    # 관계 설정
+    image = db.relationship('Image', back_populates='questions')
+    choice = db.relationship('Choice', back_populates='question', lazy=True, cascade='all, delete-orphan')
 
 class Image(db.Model):
     __tablename__ = 'images'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(255), nullable=False)
-    type = db.Column(db.String(50), nullable=True)  # 'question', 'choice', 'logo' 등
+    type = db.Column(Enum('main', 'sub', name='image_type_enum'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    def __repr__(self):
-        return f'<Image {self.url}>'
+    questions = db.relationship('Question', back_populates='image')
