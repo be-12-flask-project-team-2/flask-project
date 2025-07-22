@@ -60,4 +60,5 @@ def get_all_choices():
         "is_active": choice.is_active
     } for choice in choices]
 
+
     return jsonify(result), 200
